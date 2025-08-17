@@ -9,7 +9,7 @@ BoundedQueue::BoundedQueue(int capacity) : capacity_(capacity) {}
 
 void BoundedQueue::push(std::function<void()> task) {
     std::lock_guard<std::mutex> lkg(mtx_);
-    if (queue_.size() == capacity_ - 1) {
+    if (queue_.size() == capacity_) {
         throw std::runtime_error("no empty space in queue left");
     }
     queue_.push(std::move(task));

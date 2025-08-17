@@ -1,8 +1,9 @@
 #include "queue/priority_queue.hpp"
+#include <iostream>
 
 namespace dispatcher::queue {
-PriorityQueue::PriorityQueue(std::unordered_map<TaskPriority, QueueOptions> taskToOptions) {
-    for (const auto &elem : taskToOptions) {
+PriorityQueue::PriorityQueue(std::unordered_map<TaskPriority, QueueOptions> priorityToOptions) {
+    for (const auto &elem : priorityToOptions) {
         if (elem.second.bounded) {
             if (!elem.second.capacity.has_value()) {
                 throw std::runtime_error("Requested bounded queue but capacity is not set");
@@ -37,8 +38,10 @@ std::optional<std::function<void()>> PriorityQueue::pop() {
     bool statusEmpty = true;
     not_empty_.wait(lock, [this] { return !empty() || !shutdown_; });
 
-    if (empty())
+    if (empty()) {
+        std::cout << "HERE1" << std::endl;
         return std::nullopt;
+    }
 
     //
     // Наша очередь в случае shutdown позволяет обработать находящиеся внутри неё данные,
@@ -46,9 +49,19 @@ std::optional<std::function<void()>> PriorityQueue::pop() {
     //
 
     // Извлекаем элемент из очереди с наибольшим приоритетом
+    std::cout << "HERE2" << std::endl;
 
-    auto &q = *priorityToQueue.rbegin();
-    auto result = std::move(q.second->try_pop());
+    std::optional<std::function<void()>> result;
+
+    for (auto it = priorityToQueue.begin(); it != priorityToQueue.end(); ++it) {
+        // Если очередь для элементов с определённым приоритетов не пуста, то пытаемся сделать pop для неё
+        if (!it->second->empty()) {
+            result = std::move(it->second->try_pop());
+            break;
+        }
+    }
+    /*auto &q = *priorityToQueue.rbegin();
+    auto result = std::move(q.second->try_pop());*/
 
     return result;
 }
@@ -56,6 +69,7 @@ std::optional<std::function<void()>> PriorityQueue::pop() {
 void PriorityQueue::shutdown() {
     std::lock_guard lkg(mtx_);
     shutdown_ = false;
+    not_empty_.notify_all();
 }
 
 bool PriorityQueue::empty() {

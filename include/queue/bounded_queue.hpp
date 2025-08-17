@@ -19,7 +19,7 @@ public:
 
     bool empty() override { return queue_.empty(); }
 
-    ~BoundedQueue() override;
+    ~BoundedQueue() override = default;
 };
 
 }  // namespace dispatcher::queue

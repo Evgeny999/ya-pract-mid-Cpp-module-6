@@ -22,7 +22,7 @@ class PriorityQueue {
     std::condition_variable not_empty_;
 
 public:
-    PriorityQueue(std::unordered_map<TaskPriority, QueueOptions>);
+    PriorityQueue(std::unordered_map<TaskPriority, QueueOptions> priorityToOptions);
 
     void push(TaskPriority priority, std::function<void()> task);
     // block on pop until shutdown is called
@@ -33,7 +33,7 @@ public:
     // Все очереди пусты (или их вообще нет)
     bool empty();
 
-    ~PriorityQueue();
+    ~PriorityQueue() = default;
 };
 
 }  // namespace dispatcher::queue

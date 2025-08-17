@@ -21,7 +21,7 @@ public:
 
     bool empty() override { return queue_.empty(); }
 
-    ~UnboundedQueue() override;
+    ~UnboundedQueue() override = default;
 };
 
 }  // namespace dispatcher::queue

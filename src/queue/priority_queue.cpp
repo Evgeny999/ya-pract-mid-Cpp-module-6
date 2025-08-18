@@ -28,7 +28,9 @@ void PriorityQueue::push(TaskPriority priority, std::function<void()> task) {
 // block on pop until shutdown is called
 // after that return std::nullopt on empty queue
 std::optional<std::function<void()>> PriorityQueue::pop() {
+    std::cout << "PriorityQueue::pop() 1" << std::endl;
     std::unique_lock lock(mtx_);
+    std::cout << "PriorityQueue::pop() 2" << std::endl;
 
     //
     // Перед тем как заснуть, метод wait проверит условие, записанное в лямбда-функции
@@ -39,7 +41,7 @@ std::optional<std::function<void()>> PriorityQueue::pop() {
     not_empty_.wait(lock, [this] { return !empty() || !shutdown_; });
 
     if (empty()) {
-        std::cout << "HERE1" << std::endl;
+        // std::cout << "HERE1" << std::endl;
         return std::nullopt;
     }
 
@@ -49,7 +51,7 @@ std::optional<std::function<void()>> PriorityQueue::pop() {
     //
 
     // Извлекаем элемент из очереди с наибольшим приоритетом
-    std::cout << "HERE2" << std::endl;
+    // std::cout << "HERE2" << std::endl;
 
     std::optional<std::function<void()>> result;
 

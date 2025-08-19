@@ -28,9 +28,7 @@ void PriorityQueue::push(TaskPriority priority, std::function<void()> task) {
 // block on pop until shutdown is called
 // after that return std::nullopt on empty queue
 std::optional<std::function<void()>> PriorityQueue::pop() {
-    std::cout << "PriorityQueue::pop() 1" << std::endl;
     std::unique_lock lock(mtx_);
-    std::cout << "PriorityQueue::pop() 2" << std::endl;
 
     //
     // Перед тем как заснуть, метод wait проверит условие, записанное в лямбда-функции
@@ -62,8 +60,6 @@ std::optional<std::function<void()>> PriorityQueue::pop() {
             break;
         }
     }
-    /*auto &q = *priorityToQueue.rbegin();
-    auto result = std::move(q.second->try_pop());*/
 
     return result;
 }

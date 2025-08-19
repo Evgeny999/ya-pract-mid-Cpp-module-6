@@ -1,5 +1,6 @@
 #pragma once
 
+#include <functional>
 #include <memory>
 
 #include "queue/priority_queue.hpp"
@@ -9,12 +10,16 @@
 namespace dispatcher {
 
 class TaskDispatcher {
-    // здесь ваш код
+    std::shared_ptr<queue::PriorityQueue> task_queue_;
+    thread_pool::ThreadPool thread_poll_;
+
 public:
-    // TaskDispatcher(size_t thread_count, ?);
+    TaskDispatcher(size_t thread_count,
+                   std::unordered_map<TaskPriority, dispatcher::queue::QueueOptions> priorityToOptions = {
+                       {TaskPriority::High, {true, 1000}}, {TaskPriority::Normal, {false, std::nullopt}}});
 
     void schedule(TaskPriority priority, std::function<void()> task);
-    ~TaskDispatcher();
+    ~TaskDispatcher() = default;
 };
 
 }  // namespace dispatcher

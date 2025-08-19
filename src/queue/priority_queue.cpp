@@ -39,7 +39,6 @@ std::optional<std::function<void()>> PriorityQueue::pop() {
     not_empty_.wait(lock, [this] { return !empty() || !shutdown_; });
 
     if (empty()) {
-        // std::cout << "HERE1" << std::endl;
         return std::nullopt;
     }
 
@@ -49,7 +48,6 @@ std::optional<std::function<void()>> PriorityQueue::pop() {
     //
 
     // Извлекаем элемент из очереди с наибольшим приоритетом
-    // std::cout << "HERE2" << std::endl;
 
     std::optional<std::function<void()>> result;
 
